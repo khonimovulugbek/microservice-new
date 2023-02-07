@@ -7,7 +7,6 @@ import com.company.orderservice.model.Order;
 import com.company.orderservice.model.OrderLineItems;
 import com.company.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -23,9 +22,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional
 public class OrderService {
-    public static final String API_INVENTORY = "http://localhost:8083/api/inventory";
+    public static final String API_INVENTORY = "http://inventory-service/api/inventory";
     private final OrderRepository orderRepository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
 
     public void placeOrder(OrderRequest orderRequest) {
@@ -45,7 +44,7 @@ public class OrderService {
 
         // Call Inventory Service, and place order if product is on
         // stack
-        var inventoryResponseArray = webClient.get()
+        var inventoryResponseArray = webClientBuilder.build().get()
                 .uri(API_INVENTORY, uriBuilder -> uriBuilder
                         .queryParam("skuCodes", skuCodes)
                         .build())
